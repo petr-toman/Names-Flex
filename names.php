@@ -59,7 +59,7 @@ class nameconverter
 
 
         $fn = array(); 
-        $firstnames = preg_split("/[,; ]+/", $this->in_data->firstname, PREG_SPLIT_NO_EMPTY );   
+        $firstnames = preg_split("/[,; ]+/", $this->in_data->firstname );   
         if (is_array($firstnames)){
 
             foreach ($firstnames as $firstname) {
@@ -67,10 +67,13 @@ class nameconverter
                 if (!empty( $firstname )) {
 
                     $command = "grep -i ,\\\"". $firstname ."\\\"\, names-flex/krestni_muzi.csv";
-                    exec($command,  $fn['m'] );
-
+                    exec($command,  $fn['m']);
+                    $re = '/\"(\w+)\"$/i';
+                    preg_match_all($re, $fname[0], $matches, PREG_SET_ORDER, 0);
+                      
                     $command = "grep -i ,\\\"". $firstname ."\\\"\, names-flex/krestni_zeny.csv";
                     exec($command,  $fn['f'] );
+                    
 
                 } 
            }
@@ -80,9 +83,8 @@ class nameconverter
         $rv['surname'] = $sn;
         $rv['firstname'] =  $fn;
         $rv['call'] = "";
-
-       // var_dump($rv);
-            
+        
+        // var_dump($rv);   
         return json_encode($rv);
         
     }
