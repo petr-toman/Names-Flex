@@ -42,16 +42,36 @@ class nameconverter
                 if (!empty( $surname )) {
 
                     $command = "grep -i ,\\\"". $surname ."\\\"\, names-flex/prijmeni_muzi_1.csv";
-                    exec($command,  $sn['m1'] );
+                    exec($command,  $f);
+                    $f = explode(",", $f[0]);
+                    $f = $f[2];
+                    $f = str_replace("\"", "", $f);
+                    $sn['m1'] = $f;
+                    $f = null;
 
                     $command = "grep -i ,\\\"". $surname ."\\\"\, names-flex/prijmeni_muzi_2.csv";
-                    exec($command,  $sn['m2'] );
+                    exec($command,  $f);
+                    $f = explode(",", $f[0]);
+                    $f = $f[2];
+                    $f = str_replace("\"", "", $f);
+                    $sn['m2'] = $f;
+                    $f = null;
 
                     $command = "grep -i ,\\\"". $surname ."\\\"\, names-flex/prijmeni_zeny_1.csv";
-                    exec($command,  $sn['f1'] );
+                    exec($command,  $f);
+                    $f = explode(",", $f[0]);
+                    $f = $f[2];
+                    $f = str_replace("\"", "", $f);
+                    $sn['f1'] = $f;
+                    $f = null;
 
                     $command = "grep -i ,\\\"". $surname ."\\\"\, names-flex/prijmeni_zeny_2.csv";
-                    exec($command,  $sn['f2'] );
+                    exec($command,  $f);
+                    $f = explode(",", $f[0]);
+                    $f = $f[2];
+                    $f = str_replace("\"", "", $f);
+                    $sn['f2'] = $f;
+                    $f = null;
                     
                 } 
            }
@@ -67,19 +87,62 @@ class nameconverter
                 if (!empty( $firstname )) {
 
                     $command = "grep -i ,\\\"". $firstname ."\\\"\, names-flex/krestni_muzi.csv";
-                    exec($command,  $fn['m']);
-                    $re = '/\"(\w+)\"$/i';
-                    preg_match_all($re, $fname[0], $matches, PREG_SET_ORDER, 0);
-                      
-                    $command = "grep -i ,\\\"". $firstname ."\\\"\, names-flex/krestni_zeny.csv";
-                    exec($command,  $fn['f'] );
-                    
+                    exec($command,  $f); //var_dump($f);
+                    $f = explode(",", $f[0]);
+                    $f = $f[2];
+                    $f = str_replace("\"", "", $f);
+                    $fn['m'] = $f;
+                    $f = "";
 
+                    $command = "grep -i ,\\\"". $firstname ."\\\"\, names-flex/krestni_zeny.csv";
+                    exec($command,  $f ); //var_dump($f);
+                    $f = explode(",", $f[0]);
+                    $f = $f[2];
+                    $f = str_replace("\"", "", $f);
+                    $fn['f'] = $f;
+                    $f = "";
+                    
                 } 
            }
         }
 
         $rv = array();
+        $rv['sex'] = "";
+
+        $fn['sex'] = "";
+        if  ( !empty( $fn['f']) && empty( $fn['m'])  ) {$fn['sex'] = "F";}
+        if  ( !empty( $fn['m']) && empty( $fn['f'])  ) {$fn['sex'] = "M";}
+
+        $sn['sex'] = "";
+        if  ( 
+              (!empty( $sn['f1']) || !empty( $sn['f2']) ) 
+              && 
+              ( empty( $sn['m1'])  &&  empty( $sn['m2']) ) 
+            )
+             { $sn['sex'] = "F"; }
+
+        if  ( 
+              (!empty( $sn['m1']) || !empty( $sn['m2']) ) 
+                && 
+                ( empty( $sn['f1'])  &&  empty( $sn['f2']) ) 
+              )
+               { $sn['sex'] = "M"; }  
+               
+        if (
+            (  $sn['sex'] != "M" && $fn['sex'] != "M" )  
+            &&
+            (  $sn['sex'] == "F" || $fn['sex'] == "F" ) 
+            )
+            { $rv['sex'] = "F"; }  
+
+        if (
+             (  $sn['sex'] != "F" && $fn['sex'] != "F" )  
+                &&
+             (  $sn['sex'] == "M" || $fn['sex'] == "M" ) 
+            )
+                { $rv['sex'] = "M"; }      
+                
+
         $rv['surname'] = $sn;
         $rv['firstname'] =  $fn;
         $rv['call'] = "";
