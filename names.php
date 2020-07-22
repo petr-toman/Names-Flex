@@ -35,6 +35,7 @@ class nameconverter
     
         $surnames = preg_split("/[,; ]+/", $this->in_data->surname );
         $sn = array();
+        
         if (is_array($surnames)){
 
             foreach ($surnames as $surname) {
@@ -106,7 +107,16 @@ class nameconverter
            }
         }
 
-        $rv = array();
+        $rv = array(
+                    'res' => "", 
+                    'call' => "",
+                    'firstname' => "",
+                    'surname' => "",
+                    'sex' => "", 
+                    'fn' => "", 
+                    'sn' => ""
+                   );
+
         $rv['sex'] = "";
 
         $fn['sex'] = "";
@@ -143,11 +153,29 @@ class nameconverter
                 { $rv['sex'] = "M"; }      
                 
 
-        $rv['surname'] = $sn;
-        $rv['firstname'] =  $fn;
-        $rv['call'] = "";
-        
-        // var_dump($rv);   
+        $rv['sn'] = $sn;
+        $rv['fn'] =  $fn;
+
+        if ($rv['sex'] == "M"){
+            $rv['call'] = "Vážený pane";
+            $rv['firstname']   = $this->in_data->firstname;
+            $rv['firstname'] = $fn['m'];
+            $rv['surname']   = $this->in_data->surname;
+            $rv['surname']   =  (!empty($sn['m1']))? $sn['m1']: $sn['m2'];
+        } elseif ($rv['sex'] == "F"){
+            $rv['call'] = "Vážená paní";
+            $rv['firstname']   = $this->in_data->firstname;
+            $rv['firstname'] = $fn['f'];
+            $rv['surname']   = $this->in_data->surname;
+            $rv['surname']   =  (!empty($sn['f1']))? $sn['f1']: $sn['f2'];
+        } else {
+            $rv['call'] = "Vážený kliente";
+        }
+
+        $rv['res']  = $rv['call'] . " ".
+                      // $rv['firstname'] . " ".
+                       $rv['surname'] ;
+                
         return json_encode($rv);
         
     }
