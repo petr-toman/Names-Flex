@@ -27,6 +27,14 @@ class nameconverter
       $this->in_data->firstname       = htmlspecialchars(strip_tags($input_json->{'firstname'}));
       $this->in_data->surname         = htmlspecialchars(strip_tags($input_json->{'surname'})); 
 
+      
+      if (is_null ($input_json) ){
+        $this->in_data->firstname       = htmlspecialchars(strip_tags($_POST['firstname']));
+        $this->in_data->surname         = htmlspecialchars(strip_tags($_POST['surname'])); 
+      }
+
+
+
 
     }
 /**************************************************************************/
@@ -116,6 +124,8 @@ class nameconverter
                     'fn' => "", 
                     'sn' => ""
                    );
+
+
 
         $rv['sex'] = "";
 
